@@ -73,7 +73,7 @@ void control_layer(uint8 *Tx_App_data, uint16 data_length, uint8 Tx_App_desti,
       *Tx_Frm_type = Tx_App_type;
       *txflag = FULL;
       *dataflag = EMPTY;
-      *checkcontrol = EMPTY;
+
 
     } else if (*deframeflag == FULL && *layerflag == EMPTY ) {
 
@@ -115,10 +115,13 @@ void control_layer(uint8 *Tx_App_data, uint16 data_length, uint8 Tx_App_desti,
         Serial1.println("\n Response with NACK \n");
         Serial1.println("\n Sending Data Again \n");
         Serial1.flush();
-
+        for (i = 0; i < data_length; i++) {
+          Tx_Frm_data[i] = Tx_App_data[i];
+        }
+        *tx_size = data_length;
         *txflag = FULL;
         *deframeflag = EMPTY;
-        *checkcontrol = EMPTY;
+        *checkcontrol = FULL;
         counter++;
         if (counter == 3)
         {
@@ -127,7 +130,7 @@ void control_layer(uint8 *Tx_App_data, uint16 data_length, uint8 Tx_App_desti,
           controlflag = idle;
           counter = 0;
           *txflag = EMPTY;
-
+          *checkcontrol = EMPTY;
         }
       } else if (*Rx_Frm_dest != source) {
         *deframeflag = EMPTY;
